@@ -1,158 +1,63 @@
+import { useState } from "react";
 import "./styles.css";
+import { useAppState } from "./storage/useAppState";
+import { Banner } from "./ui/Banner";
+import { Metrics } from "./ui/Metrics";
+import { CasesBoard } from "./ui/CasesBoard";
+import { ScheduleBoard } from "./ui/ScheduleBoard";
+import { HandoverBoard } from "./ui/HandoverBoard";
+import { VersionBoard } from "./ui/VersionBoard";
 
-const project = {
-  "id": "hxwl-12",
-  "port": 5112,
-  "title": "心理咨询个案记录",
-  "subtitle": "会谈时间线、风险等级与干预目标记录",
-  "stack": "React + Vite + TypeScript + CSS",
-  "theme": [
-    "#7c3aed",
-    "#0f766e",
-    "#f59e0b"
-  ],
-  "domain": "心理咨询",
-  "users": [
-    "咨询师",
-    "督导",
-    "机构管理员"
-  ],
-  "metrics": [
-    "活跃个案",
-    "高风险关注",
-    "本周会谈",
-    "目标推进"
-  ],
-  "filters": [
-    "焦虑",
-    "亲密关系",
-    "亲子",
-    "职业压力"
-  ],
-  "fields": [
-    "来访者代号",
-    "咨询主题",
-    "会谈日期",
-    "主要困扰",
-    "情绪状态",
-    "干预方法",
-    "下次目标"
-  ],
-  "records": [
-    [
-      "C-042",
-      "焦虑",
-      "中风险",
-      "睡眠改善，练习呼吸放松"
-    ],
-    [
-      "C-119",
-      "亲密关系",
-      "稳定",
-      "识别沟通中的回避模式"
-    ],
-    [
-      "C-203",
-      "职业压力",
-      "关注",
-      "设定下周边界练习"
-    ]
-  ]
-};
+const TABS = [
+  { id: "cases", name: "个案登记 · 危机随访" },
+  { id: "schedule", name: "督导排班" },
+  { id: "handover", name: "改派交接" },
+  { id: "version", name: "排期版本" },
+] as const;
 
-const statusColors = ["status-ok", "status-watch", "status-danger"];
-
-function MetricCard({ label, value, index }: { label: string; value: string; index: number }) {
-  return (
-    <article className="metric-card">
-      <span>{label}</span>
-      <strong>{value}</strong>
-      <i className={statusColors[index % statusColors.length]} />
-    </article>
-  );
-}
+type TabId = (typeof TABS)[number]["id"];
 
 function App() {
-  const values = project.metrics.map((metric: string, index: number) => {
-    const base = [84, 12, 31, 7][index % 4];
-    return String(base + index * 3);
-  });
+  const { state, notice, apply, dismiss, reset } = useAppState();
+  const [tab, setTab] = useState<TabId>("cases");
 
   return (
     <main className="app-shell">
       <section className="hero">
         <div>
-          <p className="eyebrow">{project.id} · port {project.port}</p>
-          <h1>{project.title}</h1>
-          <p className="subtitle">{project.subtitle}</p>
+          <p className="eyebrow">hxwl-12 · port 5112</p>
+          <h1>督导排班与危机随访交接台</h1>
+          <p className="subtitle">
+            个案风险 · 随访截止 · 咨询师 / 督导 / 会谈室排班；人员重叠、高风险 24h 无接单或房间冲突整笔拒绝并保留原计划；
+            改派先建交接单，督导确认前原咨询师不释放，未完成随访随交接承接。
+          </p>
         </div>
         <div className="stack-card">
-          <span>技术栈</span>
-          <strong>{project.stack}</strong>
+          <span>架构（按层拆分）</span>
+          <strong>数据 domain · 判定 rules · 存储 storage · 界面 ui</strong>
+          <button className="reset-btn" onClick={reset}>重置为演示数据</button>
         </div>
       </section>
 
-      <section className="metrics-grid">
-        {project.metrics.map((metric: string, index: number) => (
-          <MetricCard key={metric} label={metric} value={values[index]} index={index} />
+      <Banner notice={notice} onDismiss={dismiss} />
+      <Metrics state={state} />
+
+      <nav className="tabs">
+        {TABS.map((t) => (
+          <button
+            key={t.id}
+            className={tab === t.id ? "tab active" : "tab"}
+            onClick={() => setTab(t.id)}
+          >
+            {t.name}
+          </button>
         ))}
-      </section>
+      </nav>
 
-      <section className="workspace">
-        <aside className="panel narrow">
-          <h2>角色</h2>
-          <div className="chips">
-            {project.users.map((user: string) => (
-              <span key={user}>{user}</span>
-            ))}
-          </div>
-          <h2>筛选</h2>
-          <div className="chips muted">
-            {project.filters.map((filter: string) => (
-              <button key={filter}>{filter}</button>
-            ))}
-          </div>
-        </aside>
-
-        <section className="panel">
-          <div className="section-heading">
-            <div>
-              <p>{project.domain}</p>
-              <h2>记录字段</h2>
-            </div>
-            <button className="primary-action">新增记录</button>
-          </div>
-          <div className="field-grid">
-            {project.fields.map((field: string) => (
-              <label key={field}>
-                <span>{field}</span>
-                <input placeholder={"填写" + field} />
-              </label>
-            ))}
-          </div>
-        </section>
-      </section>
-
-      <section className="records panel">
-        <div className="section-heading">
-          <div>
-            <p>示例数据</p>
-            <h2>近期记录</h2>
-          </div>
-          <button>导出摘要</button>
-        </div>
-        <div className="record-list">
-          {project.records.map((record: string[], index: number) => (
-            <article key={record.join("-")} className="record-card">
-              <div className="record-index">{String(index + 1).padStart(2, "0")}</div>
-              <div>
-                <h3>{record[0]}</h3>
-                <p>{record.slice(1).join(" · ")}</p>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
+      {tab === "cases" && <CasesBoard state={state} apply={apply} />}
+      {tab === "schedule" && <ScheduleBoard state={state} apply={apply} />}
+      {tab === "handover" && <HandoverBoard state={state} apply={apply} />}
+      {tab === "version" && <VersionBoard state={state} />}
     </main>
   );
 }
