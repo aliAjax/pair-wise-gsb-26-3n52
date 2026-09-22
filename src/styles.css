@@ -18,7 +18,8 @@ body {
 }
 
 button,
-input {
+input,
+select {
   font: inherit;
 }
 
@@ -110,7 +111,7 @@ label span {
 
 .metrics-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 14px;
   margin-bottom: 20px;
 }
@@ -214,13 +215,194 @@ label {
   gap: 8px;
 }
 
-input {
+input,
+select {
   width: 100%;
   min-height: 42px;
   border: 1px solid var(--border);
   border-radius: 6px;
   padding: 0 12px;
   color: #172033;
+  background: #ffffff;
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.form-stack {
+  display: grid;
+  gap: 12px;
+}
+
+.notice {
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  border: 1px solid;
+  line-height: 1.6;
+}
+
+.notice ul {
+  margin: 8px 0 0;
+  padding-left: 20px;
+}
+
+.notice-ok {
+  background: color-mix(in srgb, var(--accent) 10%, #ffffff);
+  border-color: color-mix(in srgb, var(--accent) 40%, #dbe3ef);
+  color: #0f766e;
+}
+
+.notice-err {
+  background: color-mix(in srgb, #e11d48 8%, #ffffff);
+  border-color: color-mix(in srgb, #e11d48 35%, #dbe3ef);
+  color: #be123c;
+}
+
+.muted-text {
+  color: #64748b;
+  font-size: 13px;
+  margin: 0;
+}
+
+.row-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.draft-list {
+  display: grid;
+  gap: 12px;
+}
+
+.draft-row {
+  display: grid;
+  grid-template-columns: auto 1.2fr 1fr 1fr;
+  gap: 10px;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  background: #fbfdff;
+}
+
+.draft-row .accept-field {
+  grid-column: span 1;
+}
+
+.draft-row > button {
+  grid-column: -2 / -1;
+}
+
+.accept-field span {
+  display: block;
+  font-size: 12px;
+  color: #be123c;
+  margin-bottom: 4px;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.data-table th,
+.data-table td {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+
+.data-table th {
+  color: #64748b;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badge-ok {
+  background: color-mix(in srgb, var(--accent) 12%, #ffffff);
+  color: #0f766e;
+}
+
+.badge-watch {
+  background: color-mix(in srgb, var(--warn) 16%, #ffffff);
+  color: #b45309;
+}
+
+.badge-danger {
+  background: color-mix(in srgb, #e11d48 10%, #ffffff);
+  color: #be123c;
+}
+
+.risk-高风险 {
+  background: color-mix(in srgb, #e11d48 10%, #ffffff);
+  color: #be123c;
+}
+
+.risk-中风险 {
+  background: color-mix(in srgb, var(--warn) 16%, #ffffff);
+  color: #b45309;
+}
+
+.risk-关注 {
+  background: color-mix(in srgb, var(--primary) 10%, #ffffff);
+  color: var(--primary);
+}
+
+.risk-稳定 {
+  background: color-mix(in srgb, var(--accent) 12%, #ffffff);
+  color: #0f766e;
+}
+
+.block-reason {
+  margin: 6px 0 0;
+  color: #be123c;
+  font-size: 12px;
+}
+
+.edit-cell {
+  display: grid;
+  gap: 8px;
+  min-width: 220px;
+}
+
+.handoff-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.4fr auto;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.record-card .row-actions {
+  margin-top: 10px;
+}
+
+.record-card button {
+  margin-top: 8px;
+}
+
+.record-card .row-actions button {
+  margin-top: 0;
+}
+
+.index-danger {
+  background: #e11d48;
 }
 
 .record-list {
@@ -267,7 +449,14 @@ input {
     grid-template-columns: 1fr;
   }
 
-  .field-grid {
+  .field-grid,
+  .draft-row,
+  .handoff-form {
     grid-template-columns: 1fr;
+  }
+
+  .data-table {
+    display: block;
+    overflow-x: auto;
   }
 }
